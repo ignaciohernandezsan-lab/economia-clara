@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Economía – Guía de estudio para Clara</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #fdf8f0;
+    --card: #fffef9;
+    --ink: #1a1208;
+    --ink2: #4a3f2f;
+    --ink3: #8a7a65;
+    --accent: #c84b11;
+    --accent2: #1a6b4a;
+    --accent3: #1a4a7a;
+    --accent4: #7a1a6b;
+    --gold: #d4882a;
+    --border: #e8dfc8;
+    --t1: #c84b11;
+    --t2: #1a6b4a;
+    --t3: #1a4a7a;
+    --t4: #7a1a6b;
+    --t5: #b85a00;
+    --t6: #0a5a6a;
+    --t7: #5a1a0a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+  header {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 2.5rem 2rem 2rem;
+    text-align: center;
+  }
+  header h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 2.6rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  header p {
+    color: #c8b898;
+    margin-top: 0.4rem;
+    font-size: 1rem;
+    font-weight: 300;
+  }
+
+  /* TABS */
+  .tabs-bar {
+    background: var(--ink);
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    border-top: 1px solid #3a3020;
+    padding: 0 2rem;
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    color: #8a7a65;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.85rem 1.2rem;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+  .tab-btn:hover { color: var(--cream); }
+  .tab-btn.active { color: var(--cream); border-bottom-color: var(--gold); }
+
+  /* TOPIC FILTER */
+  .topic-filter {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    padding: 1.2rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--card);
+  }
+  .topic-filter button {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: white;
+    cursor: pointer;
+    color: var(--ink2);
+    transition: all 0.15s;
+  }
+  .topic-filter button:hover { background: var(--cream); }
+  .topic-filter button.sel { color: white; border-color: transparent; }
+  .tf-t1.sel { background: var(--t1); }
+  .tf-t2.sel { background: var(--t2); }
+  .tf-t3.sel { background: var(--t3); }
+  .tf-t4.sel { background: var(--t4); }
+  .tf-t5.sel { background: var(--t5); }
+  .tf-t6.sel { background: var(--t6); }
+  .tf-t7.sel { background: var(--t7); }
+  .tf-all.sel { background: var(--ink); }
+
+  /* SECTION VIEWS */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ===== FLASHCARDS ===== */
+  #view-flash .fc-area {
+    padding: 2rem 2rem 1rem;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .fc-counter {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--ink3);
+    margin-bottom: 1rem;
+    font-weight: 500;
+  }
+  .flashcard {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    min-height: 240px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+    user-select: none;
+    transition: box-shadow 0.2s;
+  }
+  .flashcard:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+  .fc-tema-badge {
+    position: absolute;
+    top: 14px; left: 14px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    color: white;
+  }
+  .fc-hint {
+    position: absolute;
+    bottom: 14px; right: 14px;
+    font-size: 0.72rem;
+    color: var(--ink3);
+    display: flex; align-items: center; gap: 4px;
+  }
+  .fc-front .fc-term {
+    font-family: 'Fraunces', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .fc-back .fc-def {
+    font-size: 1rem;
+    color: var(--ink2);
+    line-height: 1.6;
+  }
+  .fc-back .fc-term-small {
+    font-family: 'Fraunces', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 0.7rem;
+  }
+  .hidden { display: none !important; }
+  .fc-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-top: 1.2rem;
+    padding-bottom: 1rem;
+  }
+  .btn-nav {
+    background: var(--ink);
+    color: var(--cream);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .btn-nav:hover { opacity: 0.85; }
+  .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn-shuffle {
+    background: var(--gold);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .fc-status {
+    display: flex; justify-content: center; gap: 10px;
+    margin-top: 0.8rem; flex-wrap: wrap;
+  }
+  .fc-status button {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 6px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-sabido { background: #d4f0d8; color: #1a6b2a; }
+  .btn-nosabido { background: #fde8e0; color: #c84b11; }
+  .fc-score {
+    text-align: center;
+    font-size: 0.82rem;
+    color: var(--ink3);
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  /* ===== TEST ===== */
+  #view-test { padding: 2rem; max-width: 700px; margin: 0 auto; }
+  .test-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin-bottom: 1.2rem;
+  }
+  .test-pregunta {
+    font-family: 'Fraunces', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 1rem;
+    line-height: 1.4;
+  }
+  .test-opciones { display: flex; flex-direction: column; gap: 8px; }
+  .test-opcion {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--ink2);
+    transition: all 0.15s;
+    text-align: left;
+  }
+  .test-opcion:hover:not(.disabled) { background: #fdf3e8; border-color: var(--gold); }
+  .test-opcion.correcta { background: #d4f0d8; border-color: #1a6b2a; color: #0a3a18; }
+  .test-opcion.incorrecta { background: #fde8e0; border-color: #c84b11; color: #7a1a0a; }
+  .test-opcion.disabled { cursor: not-allowed; }
+  .test-feedback {
+    margin-top: 0.7rem;
+    font-size: 0.82rem;
+    font-weight: 500;
+    padding: 6px 10px;
+    border-radius: 6px;
+  }
+  .test-feedback.ok { background: #d4f0d8; color: #0a5a18; }
+  .test-feedback.mal { background: #fde8e0; color: #8a1a0a; }
+  .test-tema-tag {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    color: white;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+  }
+  #test-resultado {
+    background: var(--ink);
+    color: var(--cream);
+    border-radius: 14px;
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    display: none;
+  }
+  #test-resultado .big-score {
+    font-family: 'Fraunces', serif;
+    font-size: 3rem;
+    font-weight: 700;
+  }
+  .btn-test-go {
+    display: block;
+    margin: 0 auto 1.5rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 13px 32px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* ===== COMPLETA LA FRASE ===== */
+  #view-completa { padding: 2rem; max-width: 700px; margin: 0 auto; }
+  .completa-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin-bottom: 1.2rem;
+  }
+  .completa-enunciado {
+    font-size: 1rem;
+    color: var(--ink2);
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+  .completa-blank {
+    display: inline-block;
+    border-bottom: 2px solid var(--gold);
+    min-width: 120px;
+    padding: 0 4px;
+    font-weight: 600;
+    color: var(--ink);
+    background: rgba(212,136,42,0.08);
+  }
+  .completa-input-wrap { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .completa-input {
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    flex: 1; min-width: 180px;
+    background: white;
+    color: var(--ink);
+  }
+  .completa-input:focus { outline: none; border-color: var(--gold); }
+  .btn-comprobar {
+    background: var(--accent3);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-pista {
+    background: #f0e8d8;
+    color: var(--ink2);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  .cf-feedback { margin-top: 0.6rem; font-size: 0.83rem; font-weight: 500; padding: 5px 10px; border-radius: 6px; }
+  .cf-feedback.ok { background: #d4f0d8; color: #0a5a18; }
+  .cf-feedback.mal { background: #fde8e0; color: #8a1a0a; }
+
+  /* ===== LISTA COMPLETA ===== */
+  #view-lista { padding: 2rem; }
+  .lista-tema-header {
+    font-family: 'Fraunces', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    padding: 1.2rem 0 0.6rem;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .lista-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    color: white;
+  }
+  .def-row {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    padding: 0.75rem 0;
+    align-items: start;
+  }
+  .def-term {
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: var(--ink);
+    padding-right: 1rem;
+    line-height: 1.5;
+  }
+  .def-def {
+    font-size: 0.9rem;
+    color: var(--ink2);
+    line-height: 1.6;
+  }
+  @media (max-width: 560px) {
+    .def-row { grid-template-columns: 1fr; gap: 4px; }
+    .def-term { padding-right: 0; }
+  }
+
+  /* COLORES TEMA */
+  .t1 { background: var(--t1); }
+  .t2 { background: var(--t2); }
+  .t3 { background: var(--t3); }
+  .t4 { background: var(--t4); }
+  .t5 { background: var(--t5); }
+  .t6 { background: var(--t6); }
+  .t7 { background: var(--t7); }
+
+  /* search */
+  .search-wrap {
+    padding: 1rem 2rem 0;
+    max-width: 560px;
+    display: flex; gap: 8px;
+  }
+  .search-input {
+    flex: 1;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    background: white;
+    color: var(--ink);
+  }
+  .search-input:focus { outline: none; border-color: var(--gold); }
+
+  /* progress ring */
+  .progress-ring-wrap {
+    display: flex; justify-content: center;
+    padding: 0.5rem 0 0.2rem;
+    gap: 24px;
+  }
+  .prog-item { text-align: center; }
+  .prog-label { font-size: 0.73rem; color: var(--ink3); margin-top: 4px; font-weight: 500; }
+  .prog-num { font-size: 1.2rem; font-weight: 700; font-family: 'Fraunces', serif; }
+  .prog-green { color: #1a6b2a; }
+  .prog-red { color: #c84b11; }
+  .prog-gray { color: var(--ink3); }
+
+  /* responsive */
+  @media (max-width: 600px) {
+    header h1 { font-size: 1.8rem; }
+    .fc-front .fc-term { font-size: 1.4rem; }
+    #view-test, #view-completa, #view-lista { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📚 Economía — Guía de Clara</h1>
+  <p>Temas 1–7 · Flashcards · Test · Completa la frase · Lista completa</p>
+</header>
+
+<div class="tabs-bar">
+  <button class="tab-btn active" onclick="switchView('flash', this)">Flashcards</button>
+  <button class="tab-btn" onclick="switchView('test', this)">Test</button>
+  <button class="tab-btn" onclick="switchView('completa', this)">Completa la frase</button>
+  <button class="tab-btn" onclick="switchView('lista', this)">Lista completa</button>
+</div>
+
+<!-- ============================================================ DATOS ============================================================ -->
+<script>
+const DEFS = [
+  /* T1 */
+  {id:1, tema:1, term:"Economía", def:"Ciencia que estudia cómo satisfacer las necesidades humanas mediante bienes escasos que tienen usos alternativos entre los que hay que optar."},
+  {id:2, tema:1, term:"Escasez relativa", def:"Concepto que relaciona la cantidad disponible de un bien con respecto al uso que se le da; el bien es escaso cuando su disponibilidad es insuficiente para cubrir todas las necesidades."},
+  {id:3, tema:1, term:"Necesidad", def:"Carencia de algo, unida al deseo de satisfacerla. La economía se interesa especialmente por las que requieren recursos escasos para cubrirse."},
+  {id:4, tema:1, term:"Necesidades primarias", def:"También llamadas básicas; su satisfacción es imprescindible para sobrevivir (alimentos, abrigo, etc.)."},
+  {id:5, tema:1, term:"Necesidades secundarias", def:"Surgen con la evolución y desarrollo de la sociedad; tienden a aumentar el bienestar y satisfacción del individuo."},
+  {id:6, tema:1, term:"Bienes y servicios", def:"Todas aquellas cosas consideradas adecuadas para satisfacer las necesidades humanas. Los bienes son materiales; los servicios son inmateriales."},
+  {id:7, tema:1, term:"Coste de oportunidad", def:"Aquello a lo que se debe renunciar para conseguir algo; el valor de la mejor alternativa no elegida."},
+  {id:8, tema:1, term:"Costes irrecuperables", def:"Costes del pasado que no se pueden recuperar y no deben interferir en las decisiones actuales."},
+  {id:9, tema:1, term:"Análisis marginal", def:"Proceso de tomar decisiones sopesando los beneficios adicionales frente a los costes adicionales en el momento en que se decide."},
+  {id:10, tema:1, term:"Incentivos", def:"Recompensas o estímulos que llevan a las personas a cambiar su comportamiento económico."},
+  {id:11, tema:1, term:"Eficiencia (económica)", def:"Situación en la que los recursos escasos se utilizan de la manera más productiva posible para maximizar el bienestar."},
+  {id:12, tema:1, term:"Equidad (económica)", def:"Distribución justa de los recursos y la riqueza entre los miembros de la sociedad."},
+  {id:13, tema:1, term:"Modelo económico", def:"Representación simplificada de la realidad económica para tratar de explicarla."},
+  {id:14, tema:1, term:"Mano invisible", def:"Metáfora de Adam Smith que describe cómo el mercado, a través de precios y ventas, coordina las decisiones de productores y consumidores sin necesidad de comunicación directa."},
+
+  /* T2 */
+  {id:15, tema:2, term:"Factores de producción", def:"Recursos utilizados en el proceso productivo: tierra (recursos naturales), trabajo, capital e iniciativa empresarial."},
+  {id:16, tema:2, term:"Factor tierra / recursos naturales", def:"Materias primas extraídas de la naturaleza. Pueden ser no renovables (petróleo), renovables (pesca sostenible) o inagotables (energía solar)."},
+  {id:17, tema:2, term:"Factor trabajo", def:"Intervención humana física o intelectual en el proceso productivo: mano de obra y capital humano."},
+  {id:18, tema:2, term:"Capital físico", def:"Medios e instrumentos que sirven para producir otros bienes: máquinas, herramientas, naves industriales, etc."},
+  {id:19, tema:2, term:"Capital financiero", def:"Fondos monetarios (dinero) necesarios para adquirir bienes de capital."},
+  {id:20, tema:2, term:"Capital humano", def:"Habilidades, educación, formación y experiencia que posee una persona y que elevan su capacidad productiva."},
+  {id:21, tema:2, term:"Iniciativa empresarial", def:"Función de reunir y organizar los factores productivos (tierra, trabajo y capital) para producir bienes y servicios, asumiendo el riesgo de posibles fracasos."},
+  {id:22, tema:2, term:"Agentes económicos", def:"Los protagonistas de las actividades económicas: familias, empresas y sector público."},
+  {id:23, tema:2, term:"Familias o economías domésticas", def:"Personas, solas o en grupo, cuya función es satisfacer sus necesidades mediante el consumo de bienes y servicios. Objetivo: maximizar su bienestar."},
+  {id:24, tema:2, term:"Empresas", def:"Agentes económicos cuya función básica es producir y/o distribuir los bienes y servicios que demanda la sociedad. Objetivo: maximizar beneficios."},
+  {id:25, tema:2, term:"Sector público", def:"Ámbito de la economía controlado por el poder político (administraciones públicas, organismos y empresas públicas). Objetivo: maximizar el bienestar general y reducir desigualdades."},
+  {id:26, tema:2, term:"Racionalidad económica", def:"Principio por el que los agentes económicos eligen la opción que maximiza su beneficio (utilidad o ganancia) dada su restricción de recursos."},
+  {id:27, tema:2, term:"Mercado de productos", def:"Mercado en el que se realizan intercambios de bienes y/o servicios a cambio de un precio determinado."},
+  {id:28, tema:2, term:"Mercado de factores", def:"Mercado en el que se intercambian los recursos productivos (tierra, trabajo, capital, iniciativa empresarial) a cambio de rentas como salarios, alquileres, intereses y beneficios."},
+  {id:29, tema:2, term:"Flujo Circular de la Renta (FCR)", def:"Modelo económico que representa la corriente de bienes y servicios y factores (flujo real) entre familias y empresas, y los correspondientes pagos en dinero (flujo monetario)."},
+  {id:30, tema:2, term:"Sistema económico", def:"Forma en que una sociedad se organiza para resolver sus problemas económicos básicos: ¿qué producir?, ¿cómo producir? y ¿para quién producir?"},
+  {id:31, tema:2, term:"Economía de mercado (capitalismo)", def:"Sistema donde los precios y el mercado coordinan las decisiones económicas con mínima intervención del Estado y propiedad privada de los medios de producción."},
+  {id:32, tema:2, term:"Planificación central (socialismo)", def:"Sistema donde el Estado toma todas las decisiones económicas fundamentales: qué, cómo y para quién producir."},
+  {id:33, tema:2, term:"Economía mixta", def:"Sistema que combina el mercado con la intervención del Estado para corregir fallos del mercado y redistribuir renta."},
+  {id:34, tema:2, term:"Liberalismo económico", def:"Corriente de pensamiento (Adam Smith) que defiende el libre mercado y la mínima intervención estatal: «laissez faire»."},
+  {id:35, tema:2, term:"Marxismo", def:"Corriente de pensamiento (Karl Marx) que critica el capitalismo por explotar el trabajo humano y defiende la intervención del Estado para cubrir necesidades básicas."},
+  {id:36, tema:2, term:"Keynesianismo", def:"Propone economía de mercado con intervención del Estado (política fiscal) para reactivar la economía en épocas de recesión."},
+  {id:37, tema:2, term:"Neoliberalismo", def:"Corriente que recupera el liberalismo clásico y propone reducir la intervención del Estado, privatizar empresas públicas y liberalizar mercados."},
+
+  /* T4 */
+  {id:38, tema:4, term:"Cuota de mercado", def:"Porcentaje de ventas que tiene una empresa respecto a las ventas totales del mercado."},
+  {id:39, tema:4, term:"Poder de mercado", def:"Capacidad de una empresa para influir o variar los precios de mercado. Las empresas sin poder de mercado son precio-aceptantes."},
+  {id:40, tema:4, term:"Producto homogéneo", def:"Bien cuyos productores ofrecen bienes idénticos entre sí, sin diferenciación."},
+  {id:41, tema:4, term:"Diferenciación del producto", def:"Dotar a un bien o servicio de características tangibles o intangibles (marca, calidad, diseño, envase) que lo distingan de los competidores."},
+  {id:42, tema:4, term:"Barreras de entrada", def:"Obstáculos o dificultades que impiden o limitan la entrada de nuevas empresas a un mercado; pueden ser legales o económicas."},
+  {id:43, tema:4, term:"Competencia perfecta", def:"Tipo de mercado con muchas pequeñas empresas que venden un producto homogéneo, cuyo precio viene determinado por el mercado y sobre el que ninguna empresa puede influir."},
+  {id:44, tema:4, term:"Competencia imperfecta", def:"Mercados en los que las empresas tienen capacidad para fijar precios porque ofrecen productos diferenciados y/o controlan la cantidad ofrecida."},
+  {id:45, tema:4, term:"Monopolio", def:"Tipo de mercado con una única empresa que produce un bien o servicio sin sustitutivos, con fuertes barreras de entrada y control total del precio."},
+  {id:46, tema:4, term:"Oligopolio", def:"Tipo de mercado con un reducido número de empresas que producen un bien similar. Cada empresa tiene poder de influencia sobre los precios y son muy interdependientes."},
+  {id:47, tema:4, term:"Competencia monopolística", def:"Tipo de mercado con muchas empresas que producen bienes similares pero diferenciados y bajo marcas distintas, con pocas barreras de entrada."},
+  {id:48, tema:4, term:"Teoría de juegos", def:"Teoría que estudia el comportamiento de los agentes económicos en situaciones de interdependencia estratégica."},
+  {id:49, tema:4, term:"Producto diferenciado", def:"Bien o servicio que los consumidores perciben como distinto de otros con la misma función, generalmente a través de la marca y la publicidad."},
+  {id:50, tema:4, term:"Obsolescencia programada", def:"Determinación o programación del fin de la vida útil de un producto para que, tras un periodo calculado, se vuelva obsoleto o inservible."},
+
+  /* T5 */
+  {id:51, tema:5, term:"Mercado de trabajo", def:"Mercado en el que las familias ofrecen su mano de obra a las empresas para la producción de bienes y servicios a cambio de un salario."},
+  {id:52, tema:5, term:"Población activa", def:"Personas en edad de trabajar que tienen trabajo (ocupadas) o lo buscan activamente (paradas)."},
+  {id:53, tema:5, term:"Población inactiva", def:"Personas en edad de trabajar que, por diferentes motivos, no buscan trabajo (estudiantes, jubilados, amos de casa…)."},
+  {id:54, tema:5, term:"Oferta de trabajo", def:"Cantidad de trabajo que las familias ofrecen a las empresas. Depende del salario, el tamaño de la población y el volumen de población activa."},
+  {id:55, tema:5, term:"Demanda de trabajo", def:"Cantidad de trabajadores que las empresas quieren contratar. Depende del salario, la productividad del trabajador y el precio del bien que producen."},
+  {id:56, tema:5, term:"Productividad", def:"Cantidad de productos que un trabajador es capaz de producir en un período de tiempo determinado."},
+  {id:57, tema:5, term:"Tasa de actividad", def:"Porcentaje de la población activa (PA) respecto a la población total en edad de trabajar (PT). Fórmula: TA = PA/PT × 100."},
+  {id:58, tema:5, term:"Tasa de paro", def:"Porcentaje de la población parada (PP) respecto a la población activa (PA). Fórmula: TP = PP/PA × 100."},
+  {id:59, tema:5, term:"Población desempleada", def:"Personas en condiciones de trabajar que buscan empleo pero no lo encuentran."},
+  {id:60, tema:5, term:"EPA (Encuesta de Población Activa)", def:"Encuesta trimestral del INE entre la población de 16 años o más para medir el desempleo. Homologada internacionalmente."},
+  {id:61, tema:5, term:"Paro registrado", def:"Medición mensual del desempleo que realiza el SEPE, contando solo a los desempleados que se inscriben en sus oficinas."},
+  {id:62, tema:5, term:"Desempleo friccional", def:"Desempleo transitorio (situación temporal) por cambio de trabajo, búsqueda del primer empleo, formación o cuidado de hijos."},
+  {id:63, tema:5, term:"Desempleo estacional", def:"Desempleo que se produce en determinadas épocas del año ligado a actividades como el turismo o el trabajo agrícola."},
+  {id:64, tema:5, term:"Desempleo cíclico", def:"Desempleo provocado por épocas de crisis económicas y disminución de la producción."},
+  {id:65, tema:5, term:"Desempleo estructural", def:"Desempleo provocado por desajustes en la cualificación entre puestos ofrecidos y demandados, o por sectores en declive."},
+  {id:66, tema:5, term:"Políticas de empleo activas", def:"Políticas que buscan reducir el desempleo potenciando la actividad productiva y facilitando la creación de empleo."},
+  {id:67, tema:5, term:"Políticas de empleo pasivas", def:"Políticas que tratan de proteger económicamente a los desempleados mientras buscan trabajo (prestaciones por desempleo)."},
+  {id:68, tema:5, term:"SMI (Salario Mínimo Interprofesional)", def:"Cuantía mínima retributiva fijada por ley por debajo de la cual ningún empleador puede retribuir a sus trabajadores."},
+
+  /* T6 */
+  {id:69, tema:6, term:"Sistema financiero", def:"Conjunto de intermediarios, productos y mercados financieros que llevan el ahorro de los ahorradores hasta los inversores satisfaciendo las necesidades de ambos."},
+  {id:70, tema:6, term:"Intermediarios financieros", def:"Agentes especializados que canalizan el ahorro hacia la inversión, situándose entre prestamistas y prestatarios."},
+  {id:71, tema:6, term:"Intermediarios financieros bancarios", def:"Entidades que captan dinero y lo prestan, creando dinero bancario. Pagan interés a ahorradores y cobran interés por préstamos. En España: bancos, cajas de ahorro y cooperativas de crédito."},
+  {id:72, tema:6, term:"Intermediarios financieros no bancarios", def:"Entidades que captan el ahorro para fines distintos al préstamo, sin crear dinero bancario: fondos de inversión, fondos de pensiones, aseguradoras, agencias de valores."},
+  {id:73, tema:6, term:"Coeficiente de caja", def:"Porcentaje mínimo de los depósitos que los bancos deben mantener como reservas legales para atender peticiones de dinero de sus clientes."},
+  {id:74, tema:6, term:"Fondo de Garantía de Depósitos (FGD)", def:"Organismo que garantiza los depósitos en cuentas corrientes hasta 100.000€ por entidad y titular en caso de insolvencia de la entidad de crédito."},
+  {id:75, tema:6, term:"Cuenta bancaria", def:"Producto ofrecido por los bancos para que sus clientes depositen su dinero y lo administren, realizando pagos, recibiendo ingresos o efectuando retiradas de efectivo."},
+  {id:76, tema:6, term:"Tarjeta de débito", def:"Medio de pago que permite disponer del dinero de una cuenta bancaria; el cargo se adeuada de inmediato en la cuenta."},
+  {id:77, tema:6, term:"Tarjeta de crédito", def:"Medio de pago aplazado que permite efectuar compras hasta un límite pactado sin tener fondos en el momento, cargándose en los plazos acordados con posibles intereses."},
+  {id:78, tema:6, term:"Préstamo", def:"Contrato por el que una entidad financiera entrega una cantidad de dinero a una persona o empresa con la obligación de devolverla con intereses y gastos pactados."},
+  {id:79, tema:6, term:"TAE (Tasa Anual Equivalente)", def:"Indicador del coste real de un préstamo que incluye el TIN más comisiones y gastos, permitiendo comparar diferentes productos financieros."},
+  {id:80, tema:6, term:"Préstamo personal", def:"Préstamo para financiar bienes de consumo (coches, viajes, estudios). Garantía: bienes presentes y futuros. Plazo corto o medio."},
+  {id:81, tema:6, term:"Préstamo hipotecario", def:"Préstamo para comprar o rehabilitar inmuebles. Garantía adicional: el inmueble hipotecado. Plazo largo (>15 años) y tipo de interés inferior al personal."},
+  {id:82, tema:6, term:"Créditos rápidos", def:"Préstamos de importes pequeños y concesión rápida, ofrecidos por empresas privadas (no siempre supervisadas por el Banco de España) con intereses que pueden superar el 20%."},
+  {id:83, tema:6, term:"Acciones", def:"Títulos que representan partes iguales del capital de una empresa. Sus titulares son accionistas y obtienen rentabilidad vía dividendos o plusvalías. Son renta variable."},
+  {id:84, tema:6, term:"Bonos", def:"Títulos de deuda emitidos por empresas o el Estado que representan partes de un préstamo. Ofrecen intereses periódicos fijos. Son renta fija."},
+  {id:85, tema:6, term:"Renta fija", def:"Inversión cuyo rendimiento se conoce a priori (interés predeterminado). Menor riesgo y menor rentabilidad potencial."},
+  {id:86, tema:6, term:"Renta variable", def:"Inversión cuyo rendimiento depende de los resultados de la empresa (a posteriori). Mayor riesgo y mayor rentabilidad potencial."},
+  {id:87, tema:6, term:"Bolsa de valores", def:"Mercado de valores donde se ponen en contacto demandantes de capital (empresas) y oferentes de recursos (familias e instituciones), fijándose un precio público o cotización."},
+  {id:88, tema:6, term:"IBEX 35", def:"Índice bursátil español más importante que recoge la evolución diaria del valor de las acciones de las 35 empresas más importantes del país."},
+  {id:89, tema:6, term:"Prima de riesgo", def:"Sobreprecio en rentabilidad que exigen los inversores por comprar bonos a 10 años de un país frente al bono alemán de referencia."},
+  {id:90, tema:6, term:"Liquidez", def:"Mayor o menor facilidad de un activo para convertirse en dinero efectivo sin costes significativos."},
+  {id:91, tema:6, term:"Riesgo (inversión)", def:"Probabilidad de tener pérdidas en el capital invertido. Depende del plazo, las garantías del emisor y la incertidumbre en los resultados."},
+  {id:92, tema:6, term:"Prima del seguro", def:"Cantidad periódica que se paga a una compañía de seguros a cambio de la cobertura de determinados riesgos."},
+  {id:93, tema:6, term:"Póliza", def:"Contrato del seguro en el que se detallan los riesgos cubiertos, límites, procedimiento de reclamación, etc."},
+  {id:94, tema:6, term:"Información asimétrica", def:"Situación en la que una parte de una transacción (ej. el banco) tiene más información que la otra (el cliente), pudiendo perjudicar a la parte menos informada."},
+  {id:95, tema:6, term:"Educación financiera", def:"Conocimiento necesario para comprender, comparar y tomar decisiones sobre productos financieros, evitando ser perjudicado por la información asimétrica."},
+
+  /* T7 */
+  {id:96, tema:7, term:"Sector público", def:"Ámbito de la economía controlado por el poder político. Objetivo: maximizar el bienestar general y reducir desigualdades regulando el sistema económico."},
+  {id:97, tema:7, term:"Presupuestos Generales del Estado (PGE)", def:"Documento aprobado por ley cada año en el que se determina la cantidad que el Estado puede gastar, en qué ha de gastarla y se prevén los ingresos necesarios para financiarlo."},
+  {id:98, tema:7, term:"Déficit público", def:"Situación que se produce cuando los gastos públicos superan a los ingresos públicos en un periodo determinado."},
+  {id:99, tema:7, term:"Superávit público", def:"Situación en la que los ingresos públicos superan a los gastos públicos."},
+  {id:100, tema:7, term:"Deuda pública", def:"Saldo que refleja lo que debe el Estado en un momento determinado como consecuencia del déficit público de años anteriores; se financia emitiendo letras, bonos y obligaciones."},
+  {id:101, tema:7, term:"Ingresos públicos", def:"Recursos del sector público obtenidos mediante cotizaciones sociales, tributos (impuestos, tasas, contribuciones especiales) y otras fuentes."},
+  {id:102, tema:7, term:"Cotizaciones sociales", def:"Pagos realizados a la Seguridad Social por los que se adquiere el derecho a percibir prestaciones como desempleo, jubilación o subsidios."},
+  {id:103, tema:7, term:"Tributos", def:"Ingresos públicos obligatorios establecidos por ley. Se dividen en: impuestos, tasas y contribuciones especiales."},
+  {id:104, tema:7, term:"Impuestos", def:"Pagos obligatorios por ley para financiar los gastos públicos, redistribuir la renta y desincentivar consumos perjudiciales. Pueden ser directos (sobre renta/patrimonio) o indirectos (sobre consumo)."},
+  {id:105, tema:7, term:"Tasas", def:"Tributos pagados por el uso de un bien o servicio ofrecido por la administración (DNI, permiso de conducir, tasas universitarias, etc.)."},
+  {id:106, tema:7, term:"Contribuciones especiales", def:"Tributos que pagan quienes se benefician específicamente de una obra o servicio público (alumbrado, pavimentación, parques)."},
+  {id:107, tema:7, term:"Gasto público", def:"Conjunto de todos los gastos realizados por las administraciones públicas: gastos reales (corrientes y de capital) y de transferencia (pensiones, subsidios, becas)."},
+  {id:108, tema:7, term:"Política fiscal", def:"Medidas que los gobiernos adoptan sobre el gasto público y los impuestos para facilitar el crecimiento económico, el empleo, la estabilidad de precios y el control del déficit."},
+  {id:109, tema:7, term:"Política fiscal expansiva", def:"Política que estimula la economía aumentando el gasto público y/o reduciendo impuestos para que familias y empresas consuman e inviertan más."},
+  {id:110, tema:7, term:"Política fiscal restrictiva", def:"Política que frena la economía reduciendo el gasto público y/o subiendo impuestos para controlar la inflación o el déficit público."},
+  {id:111, tema:7, term:"IRPF", def:"Impuesto sobre la Renta de las Personas Físicas; impuesto directo y progresivo que grava los ingresos de las personas físicas residentes en España."},
+  {id:112, tema:7, term:"Impuesto directo", def:"Impuesto que grava la renta o el patrimonio del contribuyente directamente (IRPF, Impuesto de Sociedades, Impuesto sobre el Patrimonio)."},
+  {id:113, tema:7, term:"Impuesto indirecto", def:"Impuesto que grava el consumo o las transacciones con independencia de la renta del contribuyente (IVA, impuesto sobre hidrocarburos, alcohol)."},
+  {id:114, tema:7, term:"Presupuesto familiar", def:"Herramienta que sirve para controlar los gastos personales, conocer la situación económica, hacer previsiones de futuro y promover hábitos inteligentes de gasto."},
+  {id:115, tema:7, term:"Redistribución de la renta", def:"Función del sector público de reducir las desigualdades económicas entre ciudadanos mediante impuestos progresivos y transferencias sociales."},
+];
+
+const TEMA_NOMBRES = {
+  1:"T1 – Principios básicos",
+  2:"T2 – Factores y agentes",
+  4:"T4 – Modelos de mercado",
+  5:"T5 – Mercado de trabajo",
+  6:"T6 – Sistema financiero",
+  7:"T7 – Cuentas públicas"
+};
+const TEMA_COLORS = {1:"#c84b11",2:"#1a6b4a",4:"#1a4a7a",5:"#7a1a6b",6:"#b85a00",7:"#0a5a6a"};
+
+// Progress tracking
+let conocidas = new Set(JSON.parse(localStorage.getItem('eco_sabe')||'[]'));
+let noconocidas = new Set(JSON.parse(localStorage.getItem('eco_no')||'[]'));
+
+function saveProgress() {
+  localStorage.setItem('eco_sabe', JSON.stringify([...conocidas]));
+  localStorage.setItem('eco_no', JSON.stringify([...noconocidas]));
+}
+</script>
+
+<!-- ============================================================ TOPIC FILTER ============================================================ -->
+<div class="topic-filter" id="topic-filter">
+  <button class="tf-all sel" data-tema="0" onclick="filterTema(0, this)">Todos</button>
+  <button class="tf-t1" data-tema="1" onclick="filterTema(1, this)">T1 – Principios básicos</button>
+  <button class="tf-t2" data-tema="2" onclick="filterTema(2, this)">T2 – Factores y agentes</button>
+  <button class="tf-t3" data-tema="4" onclick="filterTema(4, this)">T4 – Modelos de mercado</button>
+  <button class="tf-t4" data-tema="5" onclick="filterTema(5, this)">T5 – Mercado de trabajo</button>
+  <button class="tf-t5" data-tema="6" onclick="filterTema(6, this)">T6 – Sistema financiero</button>
+  <button class="tf-t6" data-tema="7" onclick="filterTema(7, this)">T7 – Cuentas públicas</button>
+</div>
+
+<!-- ============================================================ VIEWS ============================================================ -->
+
+<!-- FLASHCARDS -->
+<div id="view-flash" class="view active">
+  <div class="fc-area">
+    <div class="progress-ring-wrap" id="flash-progress"></div>
+    <div class="fc-counter" id="fc-counter"></div>
+    <div class="flashcard" id="flashcard" onclick="flipCard()">
+      <div id="fc-front" class="fc-front">
+        <span class="fc-tema-badge" id="fc-badge"></span>
+        <div class="fc-term" id="fc-term"></div>
+        <div class="fc-hint" id="fc-hint">Toca para ver la definición →</div>
+      </div>
+      <div id="fc-back" class="fc-back hidden">
+        <span class="fc-tema-badge" id="fc-badge2"></span>
+        <div class="fc-term-small" id="fc-term2"></div>
+        <div class="fc-def" id="fc-def"></div>
+      </div>
+    </div>
+    <div class="fc-status" id="fc-status" style="display:none">
+      <button class="btn-sabido" onclick="markCard(true)">✓ ¡Lo sé!</button>
+      <button class="btn-nosabido" onclick="markCard(false)">✗ Repasar</button>
+    </div>
+    <div class="fc-score" id="fc-score"></div>
+    <div class="fc-nav">
+      <button class="btn-nav" id="btn-prev" onclick="prevCard()">← Anterior</button>
+      <button class="btn-shuffle" onclick="shuffleCards()">🔀 Mezclar</button>
+      <button class="btn-nav" id="btn-next" onclick="nextCard()">Siguiente →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TEST -->
+<div id="view-test" class="view">
+  <div id="test-resultado"></div>
+  <button class="btn-test-go" id="btn-gentest" onclick="generateTest()">Generar test de 10 preguntas →</button>
+  <div id="test-preguntas"></div>
+  <button class="btn-test-go" id="btn-corregir" style="display:none;background:#1a4a7a" onclick="corregirTest()">Comprobar respuestas →</button>
+</div>
+
+<!-- COMPLETA LA FRASE -->
+<div id="view-completa" class="view">
+  <div style="padding: 1.5rem 0 0.5rem; text-align:center;">
+    <button class="btn-test-go" style="display:inline-block;margin:0 0 1rem" onclick="generateCompleta()">Nueva tanda (10 frases) →</button>
+  </div>
+  <div id="completa-preguntas"></div>
+</div>
+
+<!-- LISTA COMPLETA -->
+<div id="view-lista" class="view">
+  <div class="search-wrap">
+    <input type="text" class="search-input" id="lista-search" placeholder="Buscar término o definición…" oninput="filterLista()">
+  </div>
+  <div id="lista-contenido" style="padding: 0 2rem 3rem;"></div>
+</div>
+
+<!-- ============================================================ JS ============================================================ -->
+<script>
+let currentTema = 0;
+let filteredDefs = [...DEFS];
+let fcIndex = 0;
+let fcFlipped = false;
+let fcOrder = [];
+
+function switchView(v, btn) {
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+  btn.classList.add('active');
+  if(v==='lista') renderLista();
+  if(v==='flash') initFlash();
+  if(v==='completa') generateCompleta();
+  if(v==='test') { document.getElementById('test-preguntas').innerHTML=''; document.getElementById('btn-corregir').style.display='none'; document.getElementById('test-resultado').style.display='none'; }
+}
+
+function filterTema(t, btn) {
+  currentTema = t;
+  document.querySelectorAll('.topic-filter button').forEach(x=>x.classList.remove('sel'));
+  btn.classList.add('sel');
+  filteredDefs = t===0 ? [...DEFS] : DEFS.filter(d=>d.tema===t);
+  initFlash();
+  renderLista();
+}
+
+/* ===== FLASHCARDS ===== */
+function initFlash() {
+  fcOrder = filteredDefs.map((_,i)=>i);
+  fcIndex = 0;
+  fcFlipped = false;
+  renderFlash();
+  updateFlashProgress();
+}
+
+function shuffleCards() {
+  for(let i=fcOrder.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [fcOrder[i],fcOrder[j]]=[fcOrder[j],fcOrder[i]];
+  }
+  fcIndex=0; fcFlipped=false; renderFlash();
+}
+
+function renderFlash() {
+  if(!filteredDefs.length) return;
+  const d = filteredDefs[fcOrder[fcIndex]];
+  document.getElementById('fc-counter').textContent = (fcIndex+1)+' / '+fcOrder.length;
+  document.getElementById('fc-term').textContent = d.term;
+  document.getElementById('fc-badge').textContent = TEMA_NOMBRES[d.tema];
+  document.getElementById('fc-badge').style.background = TEMA_COLORS[d.tema];
+  document.getElementById('fc-term2').textContent = d.term;
+  document.getElementById('fc-badge2').textContent = TEMA_NOMBRES[d.tema];
+  document.getElementById('fc-badge2').style.background = TEMA_COLORS[d.tema];
+  document.getElementById('fc-def').textContent = d.def;
+  showFront();
+  document.getElementById('btn-prev').disabled = fcIndex===0;
+  document.getElementById('btn-next').disabled = fcIndex===fcOrder.length-1;
+  updateFlashScore(d);
+}
+
+function showFront() {
+  fcFlipped=false;
+  document.getElementById('fc-front').classList.remove('hidden');
+  document.getElementById('fc-back').classList.add('hidden');
+  document.getElementById('fc-hint').style.display='flex';
+  document.getElementById('fc-status').style.display='none';
+}
+
+function flipCard() {
+  fcFlipped=!fcFlipped;
+  if(fcFlipped){
+    document.getElementById('fc-front').classList.add('hidden');
+    document.getElementById('fc-back').classList.remove('hidden');
+    document.getElementById('fc-status').style.display='flex';
+  } else { showFront(); }
+}
+
+function nextCard() { if(fcIndex<fcOrder.length-1){fcIndex++;fcFlipped=false;renderFlash();} }
+function prevCard() { if(fcIndex>0){fcIndex--;fcFlipped=false;renderFlash();} }
+
+function markCard(sabe) {
+  const d = filteredDefs[fcOrder[fcIndex]];
+  if(sabe){ conocidas.add(d.id); noconocidas.delete(d.id); }
+  else { noconocidas.add(d.id); conocidas.delete(d.id); }
+  saveProgress(); updateFlashScore(d); updateFlashProgress();
+  if(fcIndex<fcOrder.length-1){ fcIndex++; fcFlipped=false; renderFlash(); }
+}
+
+function updateFlashScore(d){
+  const s = document.getElementById('fc-score');
+  if(conocidas.has(d.id)) s.textContent='✓ Marcada como sabida';
+  else if(noconocidas.has(d.id)) s.textContent='⟳ Marcada para repasar';
+  else s.textContent='';
+}
+
+function updateFlashProgress(){
+  const total = filteredDefs.length;
+  const sabe = filteredDefs.filter(d=>conocidas.has(d.id)).length;
+  const rep = filteredDefs.filter(d=>noconocidas.has(d.id)).length;
+  const pend = total - sabe - rep;
+  document.getElementById('flash-progress').innerHTML=`
+    <div class="prog-item"><div class="prog-num prog-green">${sabe}</div><div class="prog-label">Sabidas</div></div>
+    <div class="prog-item"><div class="prog-num prog-red">${rep}</div><div class="prog-label">A repasar</div></div>
+    <div class="prog-item"><div class="prog-num prog-gray">${pend}</div><div class="prog-label">Pendientes</div></div>
+    <div class="prog-item"><div class="prog-num">${total}</div><div class="prog-label">Total</div></div>
+  `;
+}
+
+/* ===== TEST ===== */
+let testPreguntas = [];
+let testRespondidas = [];
+
+function generateTest(){
+  const pool = [...filteredDefs];
+  const n = Math.min(10, pool.length);
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+  testPreguntas = pool.slice(0,n);
+  testRespondidas = new Array(n).fill(null);
+  document.getElementById('test-resultado').style.display='none';
+  const container = document.getElementById('test-preguntas');
+  container.innerHTML = '';
+  testPreguntas.forEach((d,i)=>{
+    const distractores = DEFS.filter(x=>x.id!==d.id && x.tema===d.tema);
+    let opts = distractores.sort(()=>Math.random()-0.5).slice(0,3).map(x=>x.def);
+    opts.push(d.def);
+    opts = opts.sort(()=>Math.random()-0.5);
+    const correctIdx = opts.indexOf(d.def);
+    const card = document.createElement('div');
+    card.className='test-card';
+    card.innerHTML=`
+      <span class="test-tema-tag" style="background:${TEMA_COLORS[d.tema]}">${TEMA_NOMBRES[d.tema]}</span>
+      <div class="test-pregunta">${i+1}. ¿Qué es "<strong>${d.term}</strong>"?</div>
+      <div class="test-opciones" id="opts-${i}">
+        ${opts.map((o,j)=>`<button class="test-opcion" id="opt-${i}-${j}" onclick="selectOpt(${i},${j},${j===correctIdx})">${o}</button>`).join('')}
+      </div>
+      <div id="feed-${i}" class="test-feedback" style="display:none"></div>
+    `;
+    container.appendChild(card);
+  });
+  document.getElementById('btn-corregir').style.display='block';
+  document.getElementById('btn-gentest').textContent='Regenerar test →';
+}
+
+function selectOpt(q, j, correct) {
+  testRespondidas[q] = correct;
+  const opts = document.querySelectorAll(`#opts-${q} .test-opcion`);
+  opts.forEach(o=>o.classList.add('disabled'));
+  document.getElementById(`opt-${q}-${j}`).classList.add(correct?'correcta':'incorrecta');
+  const feed = document.getElementById(`feed-${q}`);
+  feed.style.display='block';
+  feed.className = 'test-feedback '+(correct?'ok':'mal');
+  feed.textContent = correct ? '¡Correcto! ✓' : `Incorrecto. La respuesta correcta es: "${testPreguntas[q].def}"`;
+}
+
+function corregirTest(){
+  const total = testPreguntas.length;
+  const correctas = testRespondidas.filter(x=>x===true).length;
+  const pct = Math.round(correctas/total*100);
+  const emoji = pct>=90?'🏆':pct>=70?'😊':pct>=50?'💪':'📖';
+  const res = document.getElementById('test-resultado');
+  res.innerHTML = `<div class="big-score">${correctas}/${total}</div><div style="font-size:1.3rem;margin-top:0.3rem">${pct}% — ${emoji}</div><div style="margin-top:0.5rem;color:#c8b898;font-size:0.9rem">${pct>=70?'¡Muy bien, Clara!':'¡Sigue repasando!'}</div>`;
+  res.style.display='block';
+  res.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* ===== COMPLETA LA FRASE ===== */
+const PLANTILLAS_COMPLETA = [
+  d=>`El/La <strong>${d.term}</strong> se define como: "____________________"`,
+  d=>`"____________________" es la definición de <strong>${d.term}</strong>.`,
+  d=>`El concepto de <strong>${d.term}</strong> hace referencia a ____________________`,
+];
+
+function generateCompleta(){
+  const pool = [...filteredDefs];
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+  const sel = pool.slice(0, Math.min(10, pool.length));
+  const container = document.getElementById('completa-preguntas');
+  container.innerHTML = '';
+  sel.forEach((d,i)=>{
+    const card = document.createElement('div');
+    card.className = 'completa-card';
+    const pista = d.def.split(' ').slice(0,3).join(' ') + '…';
+    card.innerHTML = `
+      <span class="test-tema-tag" style="background:${TEMA_COLORS[d.tema]}">${TEMA_NOMBRES[d.tema]}</span>
+      <div class="completa-enunciado" style="margin-top:0.5rem"><strong>${i+1}. Completa:</strong> Define el término <em>"${d.term}"</em>:</div>
+      <div class="completa-input-wrap">
+        <input type="text" class="completa-input" id="cf-input-${i}" placeholder="Escribe aquí la definición…">
+        <button class="btn-pista" onclick="mostrarPista(${i},'${pista.replace(/'/g,"\\'")}')" id="pista-${i}">💡 Pista</button>
+        <button class="btn-comprobar" onclick="comprobarCompleta(${i},'${d.def.replace(/'/g,"\\'").replace(/"/g,'&quot;')}','${d.term.replace(/'/g,"\\'")}')">Comprobar</button>
+      </div>
+      <div id="cf-feed-${i}" class="cf-feedback" style="display:none"></div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function comprobarCompleta(i, correcta, term){
+  const val = document.getElementById(`cf-input-${i}`).value.trim().toLowerCase();
+  const ref = correcta.toLowerCase();
+  const palabrasClaveArr = ref.replace(/[,.:;()¿?¡!]/g,'').split(' ').filter(w=>w.length>4);
+  const aciertos = palabrasClaveArr.filter(w=>val.includes(w)).length;
+  const pct = palabrasClaveArr.length ? aciertos/palabrasClaveArr.length : 0;
+  const feed = document.getElementById(`cf-feed-${i}`);
+  feed.style.display='block';
+  if(pct>=0.55){
+    feed.className='cf-feedback ok';
+    feed.textContent=`✓ ¡Muy bien! Definición correcta de "${term}".`;
+  } else if(pct>=0.3){
+    feed.className='cf-feedback mal';
+    feed.innerHTML=`⚠ Casi. Definición completa: <em>${correcta}</em>`;
+  } else {
+    feed.className='cf-feedback mal';
+    feed.innerHTML=`✗ Incorrecto. Definición: <em>${correcta}</em>`;
+  }
+}
+
+function mostrarPista(i, pista){
+  document.getElementById(`cf-input-${i}`).placeholder = 'Pista: '+pista;
+  document.getElementById(`pista-${i}`).disabled=true;
+}
+
+/* ===== LISTA COMPLETA ===== */
+function renderLista(){
+  const q = document.getElementById('lista-search').value.toLowerCase();
+  const df = filteredDefs.filter(d=>!q||(d.term.toLowerCase().includes(q)||d.def.toLowerCase().includes(q)));
+  const byTema = {};
+  df.forEach(d=>{ if(!byTema[d.tema]) byTema[d.tema]=[]; byTema[d.tema].push(d); });
+  const cont = document.getElementById('lista-contenido');
+  cont.innerHTML = '';
+  Object.keys(byTema).sort((a,b)=>a-b).forEach(t=>{
+    const h = document.createElement('div');
+    h.className='lista-tema-header';
+    h.innerHTML=`<span class="lista-badge" style="background:${TEMA_COLORS[t]}">${TEMA_NOMBRES[t]}</span> <span style="color:var(--ink3);font-size:0.9rem">${byTema[t].length} definiciones</span>`;
+    cont.appendChild(h);
+    byTema[t].forEach(d=>{
+      const row=document.createElement('div');
+      row.className='def-row';
+      const qs = document.getElementById('lista-search').value;
+      const hl = s => qs ? s.replace(new RegExp(`(${qs.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'), '<mark style="background:#fde8a0">$1</mark>') : s;
+      row.innerHTML=`<div class="def-term">${hl(d.term)}</div><div class="def-def">${hl(d.def)}</div>`;
+      cont.appendChild(row);
+    });
+  });
+}
+
+function filterLista(){ renderLista(); }
+
+/* ===== INIT ===== */
+initFlash();
+renderLista();
+</script>
+</body>
+</html>
